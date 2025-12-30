@@ -14,11 +14,10 @@ def home():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT url, is_healthy, response_time, checked_at
-        FROM health_checks
-        ORDER BY checked_at DESC
+        SELECT DISTINCT ON (url) url, is_healthy, response_time, checked_at 
+        FROM health_checks 
+        ORDER BY url, checked_at DESC
     """)
-
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
