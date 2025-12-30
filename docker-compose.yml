@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: monitor
+      POSTGRES_PASSWORD: monitor123
+      POSTGRES_DB: health_monitor
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://monitor:monitor123@db:5432/health_monitor
+
+  dashboard:
+    build: .
+    command: python dashboard.py
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://monitor:monitor123@db:5432/health_monitor
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
